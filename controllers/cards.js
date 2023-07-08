@@ -2,7 +2,7 @@ const Card = require('../models/card');
 
 const getCards = (req, res) => {
   Card.find({})
-    .then(cards => res.status(200).send(cards))
+    .then((cards) => res.status(200).send(cards))
     .catch(() => res.status(500).send({ message: 'Произошла ошибка сервера' }));
 };
 
@@ -22,9 +22,9 @@ const deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.id).then((card) => {
     if (!card) {
       res.status(404).send({ message: 'Карточка с указанным _id не найдена' });
-      return
+      return;
     }
-    res.status(200).send(card)
+    res.status(200).send(card);
   });
 };
 
@@ -37,12 +37,11 @@ const likeCard = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: 'Переданы некорректные данные карточки.' });
-      } else if (err.kind === 'ObjectId') {
+        return res.status(400).send({ message: 'Переданы некорректные данные карточки.' });
+      } if (err.kind === 'ObjectId') {
         return res.status(400).send({ message: 'Некорректный формат id.' });
-      } else {
-        res.status(500).send({ message: 'Произошла ошибка сервера' });
       }
+      return res.status(500).send({ message: 'Произошла ошибка сервера' });
     });
 };
 
@@ -57,12 +56,11 @@ const dislikeCard = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: 'Переданы некорректные данные карточки.' });
-      } else if (err.kind === 'ObjectId') {
+        return res.status(400).send({ message: 'Переданы некорректные данные карточки.' });
+      } if (err.kind === 'ObjectId') {
         return res.status(400).send({ message: 'Некорректный формат id.' });
-      } else {
-        res.status(500).send({ message: 'Произошла ошибка сервера' });
       }
+      return res.status(500).send({ message: 'Произошла ошибка сервера' });
     });
 };
 
