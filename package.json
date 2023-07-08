@@ -5,17 +5,21 @@
   "main": "index.js",
   "scripts": {
     "start": "node app.js",
-    "dev": "nodemon app.js"
+    "dev": "nodemon app.js",
+    "lint": "npx eslint ."
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "express": "^4.18.2",
-    "mongoose": "^7.3.2"
+    "mongoose": "^7.3.2",
+    "body-parser": "^1.20.2"
   },
   "devDependencies": {
-    "body-parser": "^1.20.2",
+    "eslint": "^8.44.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.27.5",
     "nodemon": "^2.0.22"
   }
 }
