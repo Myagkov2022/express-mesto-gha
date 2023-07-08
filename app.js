@@ -10,7 +10,7 @@ const app = express();
 app.use(bodyParser.json());
 app.use((req, res, next) => {
     req.user = {
-        _id: '64a9520cb53e8c70f8430f01' // вставьте сюда _id созданного в предыдущем пункте пользователя
+        _id: '64a951a40546ee9d478ac6e5' // вставьте сюда _id созданного в предыдущем пункте пользователя
     };
 
     next();

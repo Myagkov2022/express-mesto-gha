@@ -1,12 +1,23 @@
 const Card = require('../models/card')
 
 const getCards = (req, res) => {
-    Card.find({}).then(cards => res.status(200).send(cards))
+    Card.find({})
+        .then(cards => res.status(200).send(cards))
+        .catch(_err => res.status(500).send({ message: 'Произошла ошибка сервера' }))
 }
 
 const createCard = (req, res) => {
 
-    Card.create({...req.body, owner: req.user._id}).then(card => res.status(201).send(card))
+    Card.create({...req.body, owner: req.user._id})
+        .then(card => res.status(201).send(card))
+        .catch(err => {
+            if (err.name === "ValidationError") {
+                res.status(400).send({ message: 'Переданы некорректные данные добавлении карточки.'});
+            } else {
+                res.status(500).send({ message: 'Произошла ошибка сервера'});
+            }
+        })
+
 }
 
 const deleteCard = (req, res) => {
