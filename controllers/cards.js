@@ -11,20 +11,18 @@ const createCard = (req, res) => {
     .then((card) => res.status(201).send(card))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: 'Переданы некорректные данные добавлении карточки.' });
-      } else {
-        res.status(500).send({ message: 'Произошла ошибка сервера' });
+        return res.status(400).send({ message: 'Переданы некорректные данные добавлении карточки.' });
       }
+      return res.status(500).send({ message: 'Произошла ошибка сервера' });
     });
 };
 
 const deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.id).then((card) => {
     if (!card) {
-      res.status(404).send({ message: 'Карточка с указанным _id не найдена' });
-      return;
+      return res.status(404).send({ message: 'Карточка с указанным _id не найдена' });
     }
-    res.status(200).send(card);
+    return res.status(200).send(card);
   });
 };
 
@@ -32,8 +30,9 @@ const likeCard = (req, res) => {
   Card.findByIdAndUpdate(req.params.id, { $addToSet: { likes: req.user._id } }, { new: true })
     .then((card) => {
       if (!card) {
-        res.status(404).send({ message: 'Карточка с указанным _id не найдена' });
+        return res.status(404).send({ message: 'Карточка с указанным _id не найдена' });
       }
+      return res.send(card);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -49,10 +48,9 @@ const dislikeCard = (req, res) => {
   Card.findByIdAndUpdate(req.params.id, { $pull: { likes: req.user._id } }, { new: true })
     .then((card) => {
       if (!card) {
-        res.status(404).send({ message: 'Карточка с указанным _id не найдена' });
-        return;
+        return res.status(404).send({ message: 'Карточка с указанным _id не найдена' });
       }
-      res.status(200).send(card);
+      return res.status(200).send(card);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {

@@ -5,10 +5,9 @@ const createUser = (req, res) => {
     .then((user) => res.status(201).send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: 'Переданы некорректные данные при создании профиля.' });
-      } else {
-        res.status(500).send({ message: 'Произошла ошибка сервера' });
+        return res.status(400).send({ message: 'Переданы некорректные данные при создании профиля.' });
       }
+      return res.status(500).send({ message: 'Произошла ошибка сервера' });
     });
 };
 
@@ -21,13 +20,15 @@ const getUser = (req, res) => {
   User.findById(req.params.id)
     .then((user) => {
       if (!user) {
-        res.status(404).send({ message: 'Пользователь с указанным _id не найден' });
-        return;
+        return res.status(404).send({ message: 'Пользователь с указанным _id не найден' });
       }
-      res.status(200).send(user);
+      return res.status(200).send(user);
     })
-    .catch(() => {
-      res.status(500).send({ message: 'Произошла ошибка сервера' });
+    .catch((err) => {
+      if (err.kind === 'ObjectId') {
+        return res.status(400).send({ message: 'Некорректный формат id.' });
+      }
+      return res.status(500).send({ message: 'Произошла ошибка сервера' });
     });
 };
 
@@ -37,16 +38,15 @@ const updateProfile = (req, res) => {
   User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
-        res.status(404).send({ message: 'Пользователь с указанным _id не найден' });
-        return;
+        return res.status(404).send({ message: 'Пользователь с указанным _id не найден' });
       }
-      res.status(200).send(user);
+      return res.status(200).send(user);
     })
     .catch((err) => {
       if (err.name === 'ValidatorError') {
-        res.status(400).send({ message: 'Переданы некорректные данные при обновлении профиля.' });
+        return res.status(400).send({ message: 'Переданы некорректные данные при обновлении профиля.' });
       }
-      res.status(500).send({ message: 'Произошла ошибка сервера' });
+      return res.status(500).send({ message: 'Произошла ошибка сервера' });
     });
 };
 
@@ -56,16 +56,15 @@ const updateAvatar = (req, res) => {
   User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
-        res.status(404).send({ message: 'Пользователь с указанным _id не найден' });
-        return;
+        return res.status(404).send({ message: 'Пользователь с указанным _id не найден' });
       }
-      res.status(200).send(user);
+      return res.status(200).send(user);
     })
     .catch((err) => {
       if (err.name === 'ValidatorError') {
-        res.status(400).send({ message: 'Переданы некорректные данные при обновлении профиля.' });
+        return res.status(400).send({ message: 'Переданы некорректные данные при обновлении профиля.' });
       }
-      res.status(500).send({ message: 'Произошла ошибка сервера' });
+      return res.status(500).send({ message: 'Произошла ошибка сервера' });
     });
 };
 
