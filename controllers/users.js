@@ -43,7 +43,7 @@ const updateProfile = (req, res) => {
       return res.status(200).send(user);
     })
     .catch((err) => {
-      if (err.name === 'ValidatorError') {
+      if (err.name === 'ValidationError') {
         return res.status(400).send({ message: 'Переданы некорректные данные при обновлении профиля.' });
       }
       return res.status(500).send({ message: 'Произошла ошибка сервера' });
@@ -61,7 +61,7 @@ const updateAvatar = (req, res) => {
       return res.status(200).send(user);
     })
     .catch((err) => {
-      if (err.name === 'ValidatorError') {
+      if (err.name === 'ValidationError') {
         return res.status(400).send({ message: 'Переданы некорректные данные при обновлении профиля.' });
       }
       return res.status(500).send({ message: 'Произошла ошибка сервера' });
