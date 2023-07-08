@@ -18,12 +18,19 @@ const createCard = (req, res) => {
 };
 
 const deleteCard = (req, res) => {
-  Card.findByIdAndRemove(req.params.id).then((card) => {
-    if (!card) {
-      return res.status(404).send({ message: 'Карточка с указанным _id не найдена' });
-    }
-    return res.status(200).send(card);
-  });
+  Card.findByIdAndRemove(req.params.id)
+    .then((card) => {
+      if (!card) {
+        return res.status(404).send({ message: 'Карточка с указанным _id не найдена' });
+      }
+      return res.status(200).send(card);
+    })
+    .catch((err) => {
+      if (err.kind === 'ObjectId') {
+        return res.status(400).send({ message: 'Не корректный id ' });
+      }
+      return res.status(500).send({ message: err.message });
+    });
 };
 
 const likeCard = (req, res) => {
