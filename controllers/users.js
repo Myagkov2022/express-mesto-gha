@@ -9,13 +9,13 @@ const createUser = (req, res) => {
       if (err instanceof mongoose.Error.ValidationError) {
         return res.status(http2.constants.HTTP_STATUS_BAD_REQUEST).send({ message: 'Переданы некорректные данные при создании профиля.' });
       }
-      return res.status(500).send({ message: 'Произошла ошибка сервера' });
+      return res.status(http2.constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: 'Произошла ошибка сервера' });
     });
 };
 
 const getUsers = (req, res) => {
   User.find({}).then((users) => res.status(http2.constants.HTTP_STATUS_OK).send(users))
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка сервера' }));
+    .catch(() => res.status(http2.constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: 'Произошла ошибка сервера' }));
 };
 
 const getUser = (req, res) => {
@@ -30,7 +30,7 @@ const getUser = (req, res) => {
       if (err instanceof mongoose.Error.CastError) {
         return res.status(http2.constants.HTTP_STATUS_BAD_REQUEST).send({ message: 'Некорректный формат id.' });
       }
-      return res.status(500).send({ message: 'Произошла ошибка сервера' });
+      return res.status(http2.constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: 'Произошла ошибка сервера' });
     });
 };
 
@@ -48,7 +48,7 @@ const updateProfile = (req, res) => {
       if (err instanceof mongoose.Error.ValidationError) {
         return res.status(http2.constants.HTTP_STATUS_BAD_REQUEST).send({ message: 'Переданы некорректные данные при обновлении профиля.' });
       }
-      return res.status(500).send({ message: 'Произошла ошибка сервера' });
+      return res.status(http2.constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: 'Произошла ошибка сервера' });
     });
 };
 
@@ -66,7 +66,7 @@ const updateAvatar = (req, res) => {
       if (err instanceof mongoose.Error.ValidationError) {
         return res.status(http2.constants.HTTP_STATUS_BAD_REQUEST).send({ message: 'Переданы некорректные данные при обновлении профиля.' });
       }
-      return res.status(500).send({ message: 'Произошла ошибка сервера' });
+      return res.status(http2.constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: 'Произошла ошибка сервера' });
     });
 };
 

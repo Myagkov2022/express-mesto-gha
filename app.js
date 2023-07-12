@@ -1,4 +1,5 @@
 const express = require('express');
+const http2 = require('http2');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const router = require('./routes/index');
@@ -17,7 +18,7 @@ app.use((req, res, next) => {
 
 app.use(router);
 app.use('*', (req, res) => {
-  res.status(404).send({ message: 'Ресурс не найден' });
+  res.status(http2.constants.HTTP_STATUS_NOT_FOUND).send({ message: 'Ресурс не найден' });
 });
 mongoose.connect('mongodb://localhost:27017/mestodb', {});
 

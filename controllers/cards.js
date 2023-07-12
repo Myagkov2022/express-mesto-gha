@@ -31,8 +31,7 @@ const deleteCard = (req, res) => {
       if (err instanceof mongoose.Error.CastError) {
         return res.status(http2.constants.HTTP_STATUS_BAD_REQUEST).send({ message: 'Не корректный id ' });
       }
-      return res.status(http2.constants.HTTP_STATUS_INTERNAL_SERVER_ERROR)
-        .send({ message: err.message });
+      return res.status(http2.constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: 'Произошла ошибка сервера' });
     });
 };
 
