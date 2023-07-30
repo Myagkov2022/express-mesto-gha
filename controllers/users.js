@@ -1,9 +1,49 @@
 const http2 = require('node:http2');
 const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
 const User = require('../models/user');
+const jwt = require('jsonwebtoken');
+
+
+const getCurrentUser = (req, res) => {
+  User.findById(req.user._id)
+    .then((user) => {
+      if (!user) {
+        return res.status(http2.constants.HTTP_STATUS_NOT_FOUND).send({ message: 'Пользователь с указанным _id не найден' });
+      }
+      return res.status(http2.constants.HTTP_STATUS_OK).send(user);
+    })
+    .catch((err) => {
+      if (err instanceof mongoose.Error.CastError) {
+        return res.status(http2.constants.HTTP_STATUS_BAD_REQUEST).send({ message: 'Некорректный формат idffefefef.' });
+      }
+      return res.status(http2.constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: 'Произошла ошибка сервера' });
+    });
+};
+
+const login = (req, res) => {
+  const { email, password } = req.body;
+
+  return User.findUserByCredentials(email, password)
+    .then((user) => {
+      res.send({
+        token: jwt.sign({ _id: user._id }, 'super-strong-secret', { expiresIn: '7d' }),
+      });
+    })
+    .catch((err) => {
+      res.status(401).send({ message: err.message });
+    });
+}
 
 const createUser = (req, res) => {
-  User.create({ ...req.body })
+  const {
+    email, password, name, about, avatar,
+  } = req.body;
+  bcrypt.hash(password, 10)
+    .then((hash) => User.create({
+      email, name, about, avatar,
+      password: hash,
+    }))
     .then((user) => res.status(http2.constants.HTTP_STATUS_CREATED).send(user))
     .catch((err) => {
       if (err instanceof mongoose.Error.ValidationError) {
@@ -76,4 +116,6 @@ module.exports = {
   createUser,
   updateProfile,
   updateAvatar,
+  login,
+  getCurrentUser
 };

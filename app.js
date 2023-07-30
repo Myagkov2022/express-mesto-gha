@@ -3,20 +3,17 @@ const http2 = require('http2');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const router = require('./routes/index');
+const {login, createUser} = require('./controllers/users')
+const auth = require('./middlewares/auth');
 
 const { PORT = 3000 } = process.env;
 const app = express();
 
 app.use(bodyParser.json());
-app.use((req, res, next) => {
-  req.user = {
-    _id: '64a951a40546ee9d478ac6e5', // вставьте сюда _id созданного в предыдущем пункте пользователя
-  };
 
-  next();
-});
-
-app.use(router);
+app.use(auth,router);
+app.post('/signin', login)
+app.post('/signup', createUser)
 app.use('*', (req, res) => {
   res.status(http2.constants.HTTP_STATUS_NOT_FOUND).send({ message: 'Ресурс не найден' });
 });

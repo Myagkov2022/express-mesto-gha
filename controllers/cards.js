@@ -20,11 +20,18 @@ const createCard = (req, res) => {
 };
 
 const deleteCard = (req, res) => {
-  Card.findByIdAndRemove(req.params.id)
+  Card.findById(req.params.id)
     .then((card) => {
       if (!card) {
         return res.status(http2.constants.HTTP_STATUS_NOT_FOUND).send({ message: 'Карточка с указанным _id не найдена' });
       }
+
+
+      if (card.owner !== req.user._id) {
+        return res.status(http2.constants.HTTP_STATUS_FORBIDDEN).send({ message: 'Нельзя удалить чужую карточку' });
+      }
+
+      Card.findByIdAndRemove(req.params.id);
       return res.status(http2.constants.HTTP_STATUS_OK).send(card);
     })
     .catch((err) => {
