@@ -1,9 +1,8 @@
 const http2 = require('node:http2');
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
-const User = require('../models/user');
 const jwt = require('jsonwebtoken');
-
+const User = require('../models/user');
 
 const getCurrentUser = (req, res) => {
   User.findById(req.user._id)
@@ -33,7 +32,7 @@ const login = (req, res) => {
     .catch((err) => {
       res.status(401).send({ message: err.message });
     });
-}
+};
 
 const createUser = (req, res) => {
   const {
@@ -41,7 +40,10 @@ const createUser = (req, res) => {
   } = req.body;
   bcrypt.hash(password, 10)
     .then((hash) => User.create({
-      email, name, about, avatar,
+      email,
+      name,
+      about,
+      avatar,
       password: hash,
     }))
     .then((user) => res.status(http2.constants.HTTP_STATUS_CREATED).send(user))
@@ -117,5 +119,5 @@ module.exports = {
   updateProfile,
   updateAvatar,
   login,
-  getCurrentUser
+  getCurrentUser,
 };

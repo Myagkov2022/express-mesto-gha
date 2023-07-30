@@ -22,19 +22,19 @@ const userSchema = new mongoose.Schema({
     required: false,
     minlength: 2,
     maxlength: 30,
-    default: 'Жак-Ив Кусто'
+    default: 'Жак-Ив Кусто',
   },
   about: {
     type: String,
     required: false,
     minlength: 2,
     maxlength: 30,
-    default: 'Исследователь'
+    default: 'Исследователь',
   },
   avatar: {
     type: String,
     required: false,
-    default: 'https://practicum.yandex.ru/learn/web/courses/4da123a7-d4aa-4bc2-b299-b48f921da09c/sprints/134040/topics/332a78cb-d0ee-4ef6-aa41-388504bfb629/lessons/232f6a79-0075-4280-9689-f198e0b66744/#:~:text=avatar%20%E2%80%94-,%D1%81%D1%81%D1%8B%D0%BB%D0%BA%D0%B0,-%3B'
+    default: 'https://practicum.yandex.ru/learn/web/courses/4da123a7-d4aa-4bc2-b299-b48f921da09c/sprints/134040/topics/332a78cb-d0ee-4ef6-aa41-388504bfb629/lessons/232f6a79-0075-4280-9689-f198e0b66744/#:~:text=avatar%20%E2%80%94-,%D1%81%D1%81%D1%8B%D0%BB%D0%BA%D0%B0,-%3B',
   },
 }, {
   versionKey: false,
@@ -46,7 +46,6 @@ userSchema.statics.findUserByCredentials = function (email, password) {
       if (!user) {
         return Promise.reject(new Error('Неправильные почта или пароль'));
       }
-      console.log(user)
       return bcrypt.compare(password, user.password)
         .then((matched) => {
           if (!matched) {
