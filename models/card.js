@@ -10,6 +10,7 @@ const cardSchema = new mongoose.Schema({
   link: {
     type: String,
     required: true,
+    validate: /https?:\/\/(www)?[0-9a-z\-._~:/?#[\]@!$&'()*+,;=%]+#?$/i,
   },
   owner: {
     required: true,
@@ -19,6 +20,7 @@ const cardSchema = new mongoose.Schema({
   likes: {
     type: [{
       type: mongoose.Schema.Types.ObjectId,
+      ref: 'user',
     }],
     default: [],
   },

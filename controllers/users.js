@@ -4,7 +4,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const {
-  NotFoundError, ValidationError, UnauthorizedError, ConflictError,
+  NotFoundError, ValidationError, ConflictError,
 } = require('../errors/index');
 
 const getCurrentUser = (req, res, next) => {
@@ -15,12 +15,7 @@ const getCurrentUser = (req, res, next) => {
       }
       return res.status(http2.constants.HTTP_STATUS_OK).send(user);
     })
-    .catch((err) => {
-      if (err instanceof mongoose.Error.CastError) {
-        next(new ValidationError('Некорректный формат id.'));
-      }
-      next(err);
-    });
+    .catch(next);
 };
 
 const login = (req, res, next) => {
@@ -32,9 +27,7 @@ const login = (req, res, next) => {
         token: jwt.sign({ _id: user._id }, 'super-strong-secret', { expiresIn: '7d' }),
       });
     })
-    .catch((err) => {
-      next(new UnauthorizedError(err.message));
-    });
+    .catch(next);
 };
 
 const createUser = (req, res, next) => {
@@ -60,9 +53,9 @@ const createUser = (req, res, next) => {
         next(new ValidationError('Переданы некорректные данные при создании профиля.'));
       } else if (err.code === 11000) {
         next(new ConflictError('Пользователь с таким email уже существует'));
-        return;
+      } else {
+        next(err);
       }
-      next(err);
     });
 };
 
@@ -82,8 +75,9 @@ const getUser = (req, res, next) => {
     .catch((err) => {
       if (err instanceof mongoose.Error.CastError) {
         next(new ValidationError('Некорректный формат id.'));
+      } else {
+        next(err);
       }
-      next(err);
     });
 };
 
@@ -100,8 +94,9 @@ const updateProfile = (req, res, next) => {
     .catch((err) => {
       if (err instanceof mongoose.Error.ValidationError) {
         next(new ValidationError('Переданы некорректные данные при обновлении профиля.'));
+      } else {
+        next(err);
       }
-      next(err);
     });
 };
 
@@ -118,8 +113,9 @@ const updateAvatar = (req, res, next) => {
     .catch((err) => {
       if (err instanceof mongoose.Error.ValidationError) {
         next(new ValidationError('Переданы некорректные данные при обновлении профиля.'));
+      } else {
+        next(err);
       }
-      next(err);
     });
 };
 
