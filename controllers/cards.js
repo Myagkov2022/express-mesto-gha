@@ -30,8 +30,8 @@ const deleteCard = (req, res, next) => {
         throw new ForbiddenError('Нельзя удалить чужую карточку');
       }
 
-      Card.findByIdAndRemove(req.params.id);
-      return res.status(http2.constants.HTTP_STATUS_OK).send(card);
+      Card.findByIdAndRemove(req.params.id)
+        .then(() => res.status(http2.constants.HTTP_STATUS_OK).send(card));
     })
     .catch((err) => {
       if (err instanceof mongoose.Error.CastError) {
