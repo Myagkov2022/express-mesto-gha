@@ -35,8 +35,8 @@ app.post('/signup', celebrate({
 app.use('*', (req, res) => {
   res.status(http2.constants.HTTP_STATUS_NOT_FOUND).send({ message: 'Ресурс не найден' });
 });
-app.use(errorsHandler);
 app.use(errors());
+app.use(errorsHandler);
 mongoose.connect('mongodb://localhost:27017/mestodb', {});
 
 app.listen(PORT, () => {
