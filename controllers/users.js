@@ -3,24 +3,27 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
+const {
+  NotFoundError, ValidationError, UnauthorizedError,
+} = require('../errors/index');
 
-const getCurrentUser = (req, res) => {
+const getCurrentUser = (req, res, next) => {
   User.findById(req.user._id)
     .then((user) => {
       if (!user) {
-        return res.status(http2.constants.HTTP_STATUS_NOT_FOUND).send({ message: 'Пользователь с указанным _id не найден' });
+        throw new NotFoundError('Пользователь с указанным _id не найден');
       }
       return res.status(http2.constants.HTTP_STATUS_OK).send(user);
     })
     .catch((err) => {
       if (err instanceof mongoose.Error.CastError) {
-        return res.status(http2.constants.HTTP_STATUS_BAD_REQUEST).send({ message: 'Некорректный формат idffefefef.' });
+        next(new ValidationError('Некорректный формат id.'));
       }
-      return res.status(http2.constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: 'Произошла ошибка сервера' });
+      next(err);
     });
 };
 
-const login = (req, res) => {
+const login = (req, res, next) => {
   const { email, password } = req.body;
 
   return User.findUserByCredentials(email, password)
@@ -30,11 +33,11 @@ const login = (req, res) => {
       });
     })
     .catch((err) => {
-      res.status(401).send({ message: err.message });
+      next(new UnauthorizedError(err.message));
     });
 };
 
-const createUser = (req, res) => {
+const createUser = (req, res, next) => {
   const {
     email, password, name, about, avatar,
   } = req.body;
@@ -49,66 +52,66 @@ const createUser = (req, res) => {
     .then((user) => res.status(http2.constants.HTTP_STATUS_CREATED).send(user))
     .catch((err) => {
       if (err instanceof mongoose.Error.ValidationError) {
-        return res.status(http2.constants.HTTP_STATUS_BAD_REQUEST).send({ message: 'Переданы некорректные данные при создании профиля.' });
+        next(new ValidationError('Переданы некорректные данные при создании профиля.'));
       }
-      return res.status(http2.constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: 'Произошла ошибка сервера' });
+      next(err);
     });
 };
 
-const getUsers = (req, res) => {
+const getUsers = (req, res, next) => {
   User.find({}).then((users) => res.status(http2.constants.HTTP_STATUS_OK).send(users))
-    .catch(() => res.status(http2.constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: 'Произошла ошибка сервера' }));
+    .catch(next);
 };
 
-const getUser = (req, res) => {
+const getUser = (req, res, next) => {
   User.findById(req.params.id)
     .then((user) => {
       if (!user) {
-        return res.status(http2.constants.HTTP_STATUS_NOT_FOUND).send({ message: 'Пользователь с указанным _id не найден' });
+        throw new NotFoundError('Пользователь с указанным _id не найден');
       }
       return res.status(http2.constants.HTTP_STATUS_OK).send(user);
     })
     .catch((err) => {
       if (err instanceof mongoose.Error.CastError) {
-        return res.status(http2.constants.HTTP_STATUS_BAD_REQUEST).send({ message: 'Некорректный формат id.' });
+        next(new ValidationError('Некорректный формат id.'));
       }
-      return res.status(http2.constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: 'Произошла ошибка сервера' });
+      next(err);
     });
 };
 
-const updateProfile = (req, res) => {
+const updateProfile = (req, res, next) => {
   const { name, about } = req.body;
 
   User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
-        return res.status(http2.constants.HTTP_STATUS_NOT_FOUND).send({ message: 'Пользователь с указанным _id не найден' });
+        throw new NotFoundError('Пользователь с указанным _id не найден');
       }
       return res.status(http2.constants.HTTP_STATUS_OK).send(user);
     })
     .catch((err) => {
       if (err instanceof mongoose.Error.ValidationError) {
-        return res.status(http2.constants.HTTP_STATUS_BAD_REQUEST).send({ message: 'Переданы некорректные данные при обновлении профиля.' });
+        next(new ValidationError('Переданы некорректные данные при обновлении профиля.'));
       }
-      return res.status(http2.constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: 'Произошла ошибка сервера' });
+      next(err);
     });
 };
 
-const updateAvatar = (req, res) => {
+const updateAvatar = (req, res, next) => {
   const { avatar } = req.body;
 
   User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
-        return res.status(http2.constants.HTTP_STATUS_NOT_FOUND).send({ message: 'Пользователь с указанным _id не найден' });
+        throw new NotFoundError('Пользователь с указанным _id не найден');
       }
       return res.status(http2.constants.HTTP_STATUS_OK).send(user);
     })
     .catch((err) => {
       if (err instanceof mongoose.Error.ValidationError) {
-        return res.status(http2.constants.HTTP_STATUS_BAD_REQUEST).send({ message: 'Переданы некорректные данные при обновлении профиля.' });
+        next(new ValidationError('Переданы некорректные данные при обновлении профиля.'));
       }
-      return res.status(http2.constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: 'Произошла ошибка сервера' });
+      next(err);
     });
 };
 

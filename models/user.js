@@ -34,6 +34,7 @@ const userSchema = new mongoose.Schema({
   avatar: {
     type: String,
     required: false,
+    validate: /https?:\/\/(www)?[0-9a-z\-._~:/?#[\]@!$&'()*+,;=%]+#?$/i,
     default: 'https://practicum.yandex.ru/learn/web/courses/4da123a7-d4aa-4bc2-b299-b48f921da09c/sprints/134040/topics/332a78cb-d0ee-4ef6-aa41-388504bfb629/lessons/232f6a79-0075-4280-9689-f198e0b66744/#:~:text=avatar%20%E2%80%94-,%D1%81%D1%81%D1%8B%D0%BB%D0%BA%D0%B0,-%3B',
   },
 }, {
@@ -56,5 +57,5 @@ userSchema.statics.findUserByCredentials = function (email, password) {
         });
     });
 };
-
-module.exports = mongoose.model('user', userSchema);
+const User = mongoose.model('user', userSchema);
+module.exports = User;
