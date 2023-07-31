@@ -4,7 +4,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const {
-  NotFoundError, ValidationError, UnauthorizedError,
+  NotFoundError, ValidationError, UnauthorizedError, ConflictError,
 } = require('../errors/index');
 
 const getCurrentUser = (req, res, next) => {
@@ -49,10 +49,18 @@ const createUser = (req, res, next) => {
       avatar,
       password: hash,
     }))
-    .then((user) => res.status(http2.constants.HTTP_STATUS_CREATED).send(user))
+
+    .then((user) => {
+      const userObj = user.toObject();
+      delete userObj.password;
+      res.status(http2.constants.HTTP_STATUS_CREATED).send(userObj);
+    })
     .catch((err) => {
       if (err instanceof mongoose.Error.ValidationError) {
         next(new ValidationError('Переданы некорректные данные при создании профиля.'));
+      } else if (err.code === 11000) {
+        next(new ConflictError('Пользователь с таким email уже существует'));
+        return;
       }
       next(err);
     });
